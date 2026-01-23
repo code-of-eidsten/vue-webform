@@ -1,9 +1,10 @@
 <template>
-    <form>
+    <form @submit.prevent="handleSubmit">
         <label>Email:</label>
         <input type="email" required v-model="email" />
         <label>Password:</label>
         <input type="password" required v-model="password" />
+        <div v-if="passwordError" class="error">{{ passwordError }}</div>
 
         <label>Role:</label>
         <select v-model="role">
@@ -13,13 +14,17 @@
 
         <label>Skills:</label>
         <input type="text" placeholder="e.g. JavaScript" v-model="tempSkill" @keyup="addSkill" />
-        <div v-for="(skill) in skills" :key="skill" class="pill">
-            <li>{{ skill }}</li>
+        <div v-for="(skill, index) in skills" :key="index" class="pill">
+            <span @click="removeSkill(index)">{{ skill }}</span>
         </div>
 
         <div class="terms">
             <input type="checkbox" required v-model="termsAccepted">
             <label>Accept Terms and Conditions</label>
+        </div>
+
+        <div class="submit">
+            <button type="submit">Create an Account</button>
         </div>
 
     </form>
@@ -39,6 +44,7 @@ export default {
             termsAccepted: false,
             tempSkill: '',
             skills: [],
+            passwordError: '',
         }
     },
     methods: {
@@ -48,6 +54,22 @@ export default {
                     this.skills.push(this.tempSkill)
                 }
                 this.tempSkill = ''
+            }
+        },
+        removeSkill(index) {
+            this.skills.splice(index, 1)
+        },
+        handleSubmit() {
+            //validate password
+            this.passwordError = this.password.length < 6 ?
+                'Password must be at least 6 characters long.' : ''
+
+            if (!this.passwordError) {
+                console.log('Email: ', this.email)
+                console.log('Password: ', this.password)
+                console.log('Role: ', this.role)
+                console.log('Skills: ', this.skills)
+                console.log('Terms Accepted: ', this.termsAccepted)
             }
         }
     }
@@ -92,5 +114,39 @@ input[type="checkbox"] {
     margin: 0 10px 0 0;
     position: relative;
     top: 2px;
+}
+
+.pill {
+    display: inline-block;
+    background: #eee;
+    color: #777;
+    font-size: 12px;
+    letter-spacing: 1px;
+    font-weight: bold;
+    border-radius: 20px;
+    margin: 20px 10px 0 0;
+    padding: 6px 12px;
+    cursor: pointer;
+}
+
+button {
+    background: rgb(117, 58, 252);
+    color: whitesmoke;
+    font-size: 20px;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    margin-top: 20px;
+}
+
+.submit {
+    text-align: center;
+}
+
+.error {
+    color: rgb(255, 0, 55);
+    font-size: 0.8em;
+    font-weight: bold;
+    margin-top: 5px;
 }
 </style>
